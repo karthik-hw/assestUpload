@@ -1,15 +1,16 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const { MongoClient } = require('mongodb');
 const GridFSBucket = require('mongodb').GridFSBucket;
-
+const port=process.env.PORT||5001;
 const app = express();
 app.set('view engine','ejs');
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 // Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1/test', { useNewUrlParser: true, useUnifiedTopology: true }).then(()=>
+mongoose.connect(process.env.MongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true }).then(()=>
 {
     console.log('connected to db')
 }).catch((err)=>{console.log(err)});
@@ -68,6 +69,6 @@ app.get('/download/:filename', (req, res) => {
     downloadStream.pipe(res);
   });
 // Start the server
-app.listen(3000, () => {
-  console.log('Server started on port 3000');
+app.listen(port, () => {
+  console.log(`Server started on port ${port}`);
 });
