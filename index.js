@@ -5,6 +5,7 @@ const multer = require('multer');
 const { MongoClient } = require('mongodb');
 const {validPassword,genPassword}=require('./utils/utils')
 const user=require('./models/user.model')
+const files=require('./models/files.model')
 const GridFSBucket = require('mongodb').GridFSBucket;
 const port=process.env.PORT||5001;
 const app = express();
@@ -31,7 +32,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 app.get('/',async (req,res)=>
 {
-  let data=await gfs.find({}).toArray()
+  let data=await files.find({})
   console.log("data: ",data)
     res.render('index',{data:data});
 })
@@ -99,7 +100,10 @@ app.post('/upload', upload.single('file'), (req, res) => {
   writestream.write(buffer);
   writestream.end();
 
-  writestream.on('finish', (uploadedFile) => {
+  writestream.on('finish',async (uploadedFile) => {
+    console.log("uploadedFile: ",uploadedFile)
+    let newFile=new files({filename:uploadedFile.filename,projectname:req.body.project_name})
+    await newFile.save()
     res.json({ file: uploadedFile });
   });
 
