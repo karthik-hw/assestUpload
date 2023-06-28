@@ -29,9 +29,11 @@ conn.once('open', () => {
 // Create storage engine using multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-app.get('/',(req,res)=>
+app.get('/',async (req,res)=>
 {
-    res.render('index');
+  let data=await gfs.find({}).toArray()
+  console.log("data: ",data)
+    res.render('index',{data:data});
 })
 
 //Signup
