@@ -1,27 +1,28 @@
-const {db2}=require('../config/mongoSetup');
+const {db1}=require('../config/mongoSetup');
 const mongoose=require('mongoose');
 const Schema=mongoose.Schema
-const userSchema=new Schema(
+const assetSchema=new Schema(
     {
-        name:
+        fileName:
         {
             type: String,
             required:true
         },
-        email:
+        projectName:
         {
             type: String,
             required: true,
         },
-        password:
+        uploadedBy:
         {
             type: String,
             required:true
         },
-        mobileNumber:
-        {
+        fileid:
+        {   
             type: String,
+            required: true
         }
     });
-const usermodel=db2.model('users',userSchema);
-module.exports=usermodel;
+const assetsmodel=db1.model('assets',assetSchema);
+module.exports=assetsmodel;

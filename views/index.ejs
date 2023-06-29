@@ -81,7 +81,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="project-name" class="form-label">Project Name</label>
-                            <input type="text" class="form-control" id="project-name" placeholder="Enter project name" required>
+                            <input type="text" name="projectname" class="form-control" id="project-name" placeholder="Enter project name" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Upload</button>
                     </form>
@@ -103,7 +103,34 @@
                             </tr>
                         </thead>
                         <tbody id="file-list-body">
-                            <!-- Dynamically populate the file list here using JavaScript -->
+                            <%
+                                if(!assests.length)
+                                {%>
+                                    <h3>No data</h3>
+                                <%}
+                                else
+                                {
+                                    for(let i of assests)
+                                    {%>
+                                        <tr>
+                                        <td><%=i.fileName%></td>
+                                        <td><%=i.projectName%></td>
+                                        <td><%=i.uploadedBy%></td>
+                                        <td>
+                                            <input type="hidden" name="url" id="urlToCopy" value="<%=process.env.URL%>:<%=process.env.PORT%>/files/download/<%=i.fileName%>">
+                                            <button class="btn btn-primary copy-button">Copy</button>
+                                            <span class="copy-success">Copied!</span>
+                                        </td>
+                                        <%if(i.uploadedBy==name)
+                                        {%>
+                                            <td>
+                                                <form method="post" action="/files/<%=i.fileid%>?_method=DELETE"><button class="btn btn-danger delete-button">Delete</button></form>
+                                            </td>
+                                        <%}%>
+                                    </tr>
+                                    <%}
+                                }
+                            %>
                         </tbody>
                     </table>
                 </div>
@@ -113,45 +140,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Event listener for file upload form submission
-        // document.getElementById('upload-form').addEventListener('submit', function(e) {
-        //     e.preventDefault(); // Prevent form submission
-
-        //     // Get file input and project name values
-        //     var fileInput = document.getElementById('file');
-        //     var projectNameInput = document.getElementById('project-name');
-
-        //     // Create a new row for the file list table
-        //     var newRow = document.createElement('tr');
-        //     newRow.innerHTML = `
-        //         <td>${fileInput.files[0].name}</td>
-        //         <td>${projectNameInput.value}</td>
-        //         <td>User123</td>
-        //         <td>
-        //             <button class="btn btn-primary copy-button">Copy</button>
-        //             <span class="copy-success">Copied!</span>
-        //         </td>
-        //         <td>
-        //             <button class="btn btn-danger delete-button">Delete</button>
-        //         </td>
-        //     `;
-
-        //     // Append the new row to the file list table body
-        //     var fileListBody = document.getElementById('file-list-body');
-        //     fileListBody.appendChild(newRow);
-
-        //     // Reset the form fields
-        //     fileInput.value = '';
-        //     projectNameInput.value = '';
-
-        //     // Show success message or perform additional actions here
-        //     console.log('File uploaded successfully!');
-        // });
 
         // Event listener for copy button click
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('copy-button')) {
-                var urlToCopy = 'https://example.com'; // Replace with the actual URL to copy
+                var urlToCopy = document.getElementById("urlToCopy").value; // Replace with the actual URL to copy
 
                 // Create a temporary textarea element to copy the URL
                 var textarea = document.createElement('textarea');
@@ -167,13 +160,6 @@
                 setTimeout(function() {
                     copySuccess.style.display = 'none';
                 }, 2000);
-            }
-        });
-        // Event listener for delete button click
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('delete-button')) {
-                var row = e.target.closest('tr');
-                row.remove();
             }
         });
 

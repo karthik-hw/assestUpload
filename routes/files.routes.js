@@ -8,4 +8,5 @@ const filecontroller=require('../controller/FileHandle.controller');
 router.get('/upload',passport.authenticate('jwt',{session:false}),filecontroller.prototype.upload)
 router.post('/upload',passport.authenticate('jwt',{session:false}),upload.single('file'),filecontroller.prototype.upload);
 router.get('/download/:filename',filecontroller.prototype.download);
+router.delete('/:id',filecontroller.prototype.removeFile);
 module.exports=router;

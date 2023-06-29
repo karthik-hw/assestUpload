@@ -43,15 +43,14 @@ class Auth
             }
             else
             {
-                const isUserExist=await UserModel.find({email:req.body.email});
+                const isUserExist=await UserModel.find({ $or: [{ email:req.body.email }, { name:req.body.name }] });
                 if(isUserExist.length)
                 {
-                    res.send("Account already exist");
+                    res.send("Account already exist because the email or name");
                 }
                 else
                 {
                     const {email,password,phone,name}=req.body
-                    console.log(req.body)
                     const newUser=new User(name,email,password,phone);
                     newUser.password=await PasswordService.prototype.hashPassword(newUser.password);
                     const user=await UserModel.create(newUser);
@@ -60,6 +59,7 @@ class Auth
                 }
             }
         } catch (error) {
+            console.log(error)
             res.status(500).send("<a href='/signup'>try agian</>")
         }
     }
