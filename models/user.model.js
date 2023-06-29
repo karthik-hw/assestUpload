@@ -1,28 +1,29 @@
 const {db2}=require('../config/mongoSetup');
 const mongoose=require('mongoose');
-const userSchema=mongoose.Schema(
+const Schema=mongoose.Schema
+const userSchema=new Schema(
     {
         name:
         {
-            type:string,
+            type: String,
             required:true
         },
         email:
         {
-            type:string,
+            type: String,
             required: true,
             unique: true,
             match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address']
         },
         password:
         {
-            type:string,
+            type: String,
             required:true,
             match:[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,'Password must be min 8 length and 1 uppercase , 1 lowercase,1 numeric,1 special symbol']
         },
         mobileNumber:
         {
-            type:string,
+            type: String,
             required:true,
             match:[/^\d{10}$/,'give valid mobile number']
         }

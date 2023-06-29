@@ -12,6 +12,10 @@ class FileHandle
     {
         try 
         {
+            if(req.method==='GET')
+            {
+                return res.render('index');
+            }
             const { file } = req;
             if (!file) {
                 res.status(400).json({ error: 'No file uploaded' });
