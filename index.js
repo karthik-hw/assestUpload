@@ -2,20 +2,18 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const { MongoClient } = require('mongodb');
 const GridFSBucket = require('mongodb').GridFSBucket;
 const port=process.env.PORT||5001;
+const MongoConnection=require('./config/mongoSetup');
 const app = express();
 app.set('view engine','ejs');
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 // Connect to MongoDB
-mongoose.connect(process.env.MongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true }).then(()=>
-{
-    console.log('connected to db')
-}).catch((err)=>{console.log(err)});
-const conn = mongoose.connection;
-
+const dbConnection1=new MongoConnection(process.env.MongoDBUri_1,1);
+const conn=dbConnection1.connect();
+const dbConnection2=new MongoConnection(process.env.MongoDBUri_2,2);
+dbConnection2.connect()
 let gfs;
 
 conn.once('open', () => {
@@ -34,12 +32,11 @@ app.get('/',(req,res)=>
 // Handle file upload
 app.post('/upload', upload.single('file'), (req, res) => {
   const { file } = req;
-
   if (!file) {
     res.status(400).json({ error: 'No file uploaded' });
     return;
   }
-
+  
   const { originalname, buffer } = file;
 
   const writestream = gfs.openUploadStream(originalname);
@@ -72,3 +69,4 @@ app.get('/download/:filename', (req, res) => {
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
+module.exports={conn};
